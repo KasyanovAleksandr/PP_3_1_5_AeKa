@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepositories userRepositories;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepositories userRepositories) {
+    public UserServiceImpl(UserRepositories userRepositories, PasswordEncoder bCryptPasswordEncoder) {
 
         this.userRepositories = userRepositories;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 
     }
 
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Transactional
     public void saveUser(User user) {
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepositories.save(user);
     }
 

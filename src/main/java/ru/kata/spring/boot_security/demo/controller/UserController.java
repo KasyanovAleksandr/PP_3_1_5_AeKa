@@ -39,7 +39,7 @@ public class UserController {
 
     @PostMapping("/admin/saveUser")
     public String saveUser(@ModelAttribute("user") User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         return "redirect:/admin/";
     }
@@ -79,7 +79,7 @@ public class UserController {
     @PostMapping("/admin/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.updateUser(id, user);
 
         return "redirect:/admin";
