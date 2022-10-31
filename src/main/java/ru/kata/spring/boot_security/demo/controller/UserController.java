@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,10 +20,14 @@ public class UserController {
 
     private final RoleService roleService;
 
+
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/admin/new")
@@ -34,6 +39,7 @@ public class UserController {
 
     @PostMapping("/admin/saveUser")
     public String saveUser(@ModelAttribute("user") User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         return "redirect:/admin/";
     }
@@ -53,8 +59,12 @@ public class UserController {
     }
 
     @RequestMapping("/admin")
-    public String printUsersForAdmin(ModelMap model) {
+    public String printUsersForAdmin(ModelMap model, Principal principal) {
         model.addAttribute("allUsers", userService.getAllUsers());
+        model.addAttribute("user", userService.findByName(principal.getName()));
+
+        model.addAttribute("newUser", new User());
+        model.addAttribute("userRoles", roleService.findAll());
 
         return "/admin/users";
     }
@@ -66,18 +76,12 @@ public class UserController {
         return "redirect:/admin/";
     }
 
-    @PatchMapping("/admin/{id}")
+    @PostMapping("/admin/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.updateUser(id, user);
 
-        return "redirect:/admin/";
+        return "redirect:/admin";
     }
-
-    @GetMapping("/admin/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.getUserAtId(id));
-
-        return "/admin/edit";
-    }
-
 }

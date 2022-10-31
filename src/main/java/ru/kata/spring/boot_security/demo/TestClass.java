@@ -30,7 +30,7 @@ public class TestClass {
                         (userService.findByName("admin") == null)
         ) {
 
-            User admin = new User("Admin", "Admin", "20", "100");
+            User admin = new User("Admin", "Admin", "20", "admin@admin.ru", "$2a$12$qmoIfx0VXZ9zYb3IfPVRpOCeLnURKEy7umBMprq/eDFi2bx/P3mxq");
             Role adminRole = new Role("ROLE_ADMIN");
             roleService.addRole(adminRole);
             admin.addRole(adminRole);
