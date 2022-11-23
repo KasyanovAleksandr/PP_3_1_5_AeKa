@@ -3,13 +3,11 @@ package ru.kata.spring.boot_security.demo.configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
@@ -21,7 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserServiceImpl userService;
 
     @Autowired
-    public void setUserService(@Lazy UserServiceImpl userService) {
+    public void setUserService(UserServiceImpl userService) {
         this.userService = userService;
     }
 
@@ -34,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/").hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
@@ -43,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
                 .and()
                 .csrf()
@@ -57,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder();
     }
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {

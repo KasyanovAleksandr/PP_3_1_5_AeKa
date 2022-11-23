@@ -10,21 +10,25 @@ import java.util.List;
 @Service
 @Transactional
 public class RoleServiceImpl implements RoleService{
-    private RoleRepositories roleRepositories;
+    RoleRepositories roleRepositories;
 
     @Autowired
     public RoleServiceImpl(RoleRepositories roleRepositories) {
         this.roleRepositories = roleRepositories;
     }
-    @Override
+
     public List<Role> findAll() {
         return roleRepositories.findAll();
     }
 
     @Transactional
-    @Override
     public void addRole(Role role) {
         roleRepositories.save(role);
+    }
+
+    @Override
+    public Role findById(Integer id) {
+        return roleRepositories.findById(id);
     }
 
 }
